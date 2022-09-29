@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       fontFamily:{
         'bebas-neue': ["Bebas Neue", 'cursive'],
+        'roboto': ['Roboto', 'sans-serif'],
       },
     },
   },
