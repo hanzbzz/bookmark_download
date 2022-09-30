@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block login %}
+    <div class="flex flex-col items-center justify-center grow">
+        <h1 class="font-roboto font-bold text-2xl pb-4">Download your tweets saved in Twitter bookmarks, including videos and images, into a single zip archive</h1>
+        <h2 class="font-roboto font-bold text-1xl pb-4">Log in with your twitter account by clicking the button below:</h2>
+        <a href="{{url_for('auth.url')}}">
+            <img src="/static/sign-in-with-twitter-gray.png">
+        </a>
+    </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block user_info %}
+    <div class="flex self-end p-12 flex-col">
+        <div class="flex flex-row">
+            <img class="rounded-full" src="{{g.profile_pic_url}}">
+            <p class="self-center p-2">{{g.username}}</p>
+        </div>
+        <div class="flex self-start">
+            <form action="{{url_for('api.logout')}}">
+                <input type="submit" value="Logout" class="bg-sky-900 m-2 px-4 py-2 text-white rounded-xl hover:bg-sky-700 hover:cursor-pointer"/>
+            </form>
+        </div>
+    </div>
+{% endblock %}
