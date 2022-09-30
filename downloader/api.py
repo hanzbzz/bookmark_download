@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import tweepy
 from flask import session, Blueprint, redirect, url_for
 from typing import List
+from . import utils
 
 load_dotenv()
 
@@ -22,6 +23,7 @@ def client_init():
 @bp.route('/user')
 def user():
     user: tweepy.User = client.get_me(user_fields='profile_image_url', user_auth=False).data
+    
     session['username'] = user.username
     session['profile_pic_url'] = user.profile_image_url
     return redirect(url_for('index'))
@@ -34,5 +36,8 @@ def logout():
 
 @bp.route('/timeline')
 def timeline():
-    bookmarks = client.get_bookmarks().data
-    return {"data":bookmarks}
+    bookmarks = client.get_bookmarks(expansions=['attachments.media_keys'],media_fields=["url","variants"])
+    tweets = bookmarks.data
+    media = bookmarks.includes.get('media')
+    tweets = utils.parse_bookmarks(tweets, media)
+    return tweets
