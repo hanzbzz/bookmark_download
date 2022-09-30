@@ -1,7 +1,7 @@
 
 import os
 
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, g
 from . import auth, api
 
 def create_app():
@@ -16,10 +16,8 @@ def create_app():
 
     @app.route('/')
     def index():
-        
-        logged_in = session.get('access_token') is not None
-        username, profile_pic_url = session.get('username'), session.get('profile_pic_url')
-        return render_template('index.html', logged_in=logged_in, username=username, profile_pic_url=profile_pic_url)
+        logged_in = session.get('bearer_token') is not None
+        return render_template('user.html', logged_in=True) if logged_in else render_template('login.html', logged_in=False)
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(api.bp)
@@ -27,6 +25,7 @@ def create_app():
     app.permanent_session_lifetime = 60 * 60 * 24 
     @app.before_request
     def permanent_session():
+        g.username, g.profile_pic_url = session.get('username'), session.get('profile_pic_url')
         session.permanent = True
     
     return app

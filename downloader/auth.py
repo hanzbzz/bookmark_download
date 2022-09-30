@@ -2,36 +2,34 @@ from flask import Blueprint, request, session, redirect, url_for
 from dotenv import load_dotenv
 import tweepy
 import os
-import requests
-
 
 load_dotenv()
 
-api_key = os.environ["API_KEY"]
-api_secret = os.environ["API_SECRET"]
+client_id = os.environ["CLIENT_ID"]
+client_secret = os.environ["CLIENT_SECRET"]
 
-
+import os 
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+oauth2 = tweepy.OAuth2UserHandler(
+    client_id=client_id,
+    client_secret=client_secret,
+    redirect_uri="http://localhost:5000/auth/callback",
+    scope=["tweet.read", "users.read", "bookmark.read", "bookmark.write"])
+
+
 
 @bp.route('/url')
 def url():
-    oauth = tweepy.OAuth1UserHandler(api_key, api_secret, callback="http://localhost:5000/auth/callback")
-    auth_url = oauth.get_authorization_url()
-    session.clear()
-    session["request_token"] = oauth.request_token
+    auth_url = oauth2.get_authorization_url()
     return redirect(auth_url)
 
 @bp.route('/callback')
 def callback():
-    verifier = request.args.get("oauth_verifier")
-    oauth = tweepy.OAuth1UserHandler(api_key, api_secret)
-    token = session.get("request_token")
-    oauth.request_token = token
     try:
-        oauth.get_access_token(verifier)
+        access_token = oauth2.fetch_token(request.url)
     except tweepy.TweepyException:
         print("Error trying to get access token")
-    session['access_token'] = oauth.access_token
-    session['access_secret'] = oauth.access_token_secret
+    session['bearer_token'] = access_token['access_token']
     return redirect(url_for('api.user'))
