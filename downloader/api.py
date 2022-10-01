@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 import tweepy
-from flask import session, Blueprint, redirect, url_for
+from flask import session, Blueprint, redirect, url_for, send_file
+import shutil
 from . import utils
 
 
@@ -40,5 +41,6 @@ def download():
     tweets = bookmarks.data
     media = bookmarks.includes.get('media')
     tweets = utils.parse_bookmarks(tweets, media)
-    utils.download_tweets(tweets,["text", "video", "photo"], False)
-    return tweets
+    path = utils.download_tweets(tweets,["text", "video", "photo"], False, False)
+    zip_file = shutil.make_archive(path, "zip", path)
+    return send_file(zip_file)

@@ -57,41 +57,33 @@ def make_random_dir(name_length: int):
 
 def download_tweets(tweets: dict[str, dict], selected_types: List[str], include_text: bool, remove: bool):
     dir_path = make_random_dir(12)
-    downloaded = []
     for id in tweets.keys():
         tweet = tweets[id]
         tweet_type = tweet["type"]
 
         if tweet_type in selected_types:
             if tweet_type == "text":
-                success = download_text_tweet(id, tweet, dir_path)
+                download_text_tweet(id, tweet, dir_path)
             elif tweet_type == "photo":
-                success = download_media_tweet(id ,tweet, dir_path, include_text, "jpg")
+                download_media_tweet(id ,tweet, dir_path, include_text, "jpg")
             else :
-                success = download_media_tweet(id ,tweet, dir_path, include_text, "mp4")
-        if success:
-            downloaded.append(id)
+                download_media_tweet(id ,tweet, dir_path, include_text, "mp4")
+    return dir_path
         
 def download_text_tweet(id:str, tweet: dict[str, Union[str, List[str]]], dir_path: str):
-    try:
-        with open(f"{dir_path}/{id}.txt", "w") as f:
-            f.write(tweet["text"])
-        return True
-    except Exception:
-        return False
+    with open(f"{dir_path}/{id}.txt", "w") as f:
+        f.write(tweet["text"])
+
 
 def download_media_tweet(id:str, tweet: dict[str, Union[str, List[str]]], dir_path: str, include_text: bool, extension: str):
     no = 1
-    
-    try:
-        for url in tweet["media_urls"]:
-            data = requests.get(url).content
-            with open(f"{dir_path}/{id}{'_' + no if len(tweet['media_urls']) > 1 else ''}.{extension}","wb") as handler:
-                handler.write(data)
-            no += 1
-        if include_text:
-            download_text_tweet(id, tweet, dir_path)
-        return True
-    except Exception:
-        return False
+ 
+    for url in tweet["media_urls"]:
+        data = requests.get(url).content
+        with open(f"{dir_path}/{id}{'_' + no if len(tweet['media_urls']) > 1 else ''}.{extension}","wb") as handler:
+            handler.write(data)
+        no += 1
+    if include_text:
+        download_text_tweet(id, tweet, dir_path)
+
 
