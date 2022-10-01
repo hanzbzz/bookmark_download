@@ -1,6 +1,10 @@
 import tweepy
-from typing import List
+from typing import List, Union
 from . import models
+import random
+import string
+import os
+import requests
 
 
 def media_list_to_dict(media: List[tweepy.Media]):
@@ -37,7 +41,7 @@ def parse_bookmarks(tweets: List[tweepy.Tweet], media: List[tweepy.Media]):
     
     for tweet in tweets:
         if tweet.attachments is None:
-            result[tweet.id] = models.TweetInfo("text",tweet.text, [""]).to_dict()
+            result[tweet.id] = models.TweetInfo("text",tweet.text, []).to_dict()
         else:
             keys = tweet.attachments['media_keys']
             urls = get_media_urls(keys, media_dict)
@@ -45,3 +49,49 @@ def parse_bookmarks(tweets: List[tweepy.Tweet], media: List[tweepy.Media]):
             result[tweet.id] = models.TweetInfo(media_type, tweet.text, urls).to_dict()
     
     return result
+
+def make_random_dir(name_length: int):
+    dir_name = "".join(random.choice(string.ascii_letters + string.digits)for _ in range(name_length))
+    os.mkdir("downloads/" + dir_name)
+    return "downloads/" + dir_name
+
+def download_tweets(tweets: dict[str, dict], selected_types: List[str], include_text: bool, remove: bool):
+    dir_path = make_random_dir(12)
+    downloaded = []
+    for id in tweets.keys():
+        tweet = tweets[id]
+        tweet_type = tweet["type"]
+
+        if tweet_type in selected_types:
+            if tweet_type == "text":
+                success = download_text_tweet(id, tweet, dir_path)
+            elif tweet_type == "photo":
+                success = download_media_tweet(id ,tweet, dir_path, include_text, "jpg")
+            else :
+                success = download_media_tweet(id ,tweet, dir_path, include_text, "mp4")
+        if success:
+            downloaded.append(id)
+        
+def download_text_tweet(id:str, tweet: dict[str, Union[str, List[str]]], dir_path: str):
+    try:
+        with open(f"{dir_path}/{id}.txt", "w") as f:
+            f.write(tweet["text"])
+        return True
+    except Exception:
+        return False
+
+def download_media_tweet(id:str, tweet: dict[str, Union[str, List[str]]], dir_path: str, include_text: bool, extension: str):
+    no = 1
+    
+    try:
+        for url in tweet["media_urls"]:
+            data = requests.get(url).content
+            with open(f"{dir_path}/{id}{'_' + no if len(tweet['media_urls']) > 1 else ''}.{extension}","wb") as handler:
+                handler.write(data)
+            no += 1
+        if include_text:
+            download_text_tweet(id, tweet, dir_path)
+        return True
+    except Exception:
+        return False
+

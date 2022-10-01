@@ -40,4 +40,5 @@ def download():
     tweets = bookmarks.data
     media = bookmarks.includes.get('media')
     tweets = utils.parse_bookmarks(tweets, media)
+    utils.download_tweets(tweets,["text", "video", "photo"], False)
     return tweets
