@@ -1,10 +1,9 @@
 import os
-from time import time
 from dotenv import load_dotenv
 import tweepy
 from flask import session, Blueprint, redirect, url_for
-from typing import List
 from . import utils
+
 
 load_dotenv()
 
@@ -34,8 +33,9 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-@bp.route('/timeline')
-def timeline():
+
+@bp.route('/download')
+def download():
     bookmarks = client.get_bookmarks(expansions=['attachments.media_keys'],media_fields=["url","variants"])
     tweets = bookmarks.data
     media = bookmarks.includes.get('media')

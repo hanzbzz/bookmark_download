@@ -37,11 +37,11 @@ def parse_bookmarks(tweets: List[tweepy.Tweet], media: List[tweepy.Media]):
     
     for tweet in tweets:
         if tweet.attachments is None:
-            result[tweet.id] = models.TweetInfo(tweet.id, "text",tweet.text, [""]).to_dict()
+            result[tweet.id] = models.TweetInfo("text",tweet.text, [""]).to_dict()
         else:
             keys = tweet.attachments['media_keys']
             urls = get_media_urls(keys, media_dict)
             media_type = media_dict[keys[0]].type
-            result[tweet.id] = models.TweetInfo(tweet.id,media_type, tweet.text, urls).to_dict()
+            result[tweet.id] = models.TweetInfo(media_type, tweet.text, urls).to_dict()
     
     return result
