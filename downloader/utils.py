@@ -1,3 +1,4 @@
+import shutil
 import tweepy
 from typing import List, Union
 from . import models
@@ -55,7 +56,7 @@ def make_random_dir(name_length: int):
     os.mkdir("downloads/" + dir_name)
     return "downloads/" + dir_name
 
-def download_tweets(tweets: dict[str, dict], selected_types: List[str], include_text: bool, remove: bool):
+def download_tweets(tweets: dict[str, dict], selected_types: List[str], include_text: bool):
     dir_path = make_random_dir(12)
     for id in tweets.keys():
         tweet = tweets[id]
@@ -80,10 +81,18 @@ def download_media_tweet(id:str, tweet: dict[str, Union[str, List[str]]], dir_pa
  
     for url in tweet["media_urls"]:
         data = requests.get(url).content
-        with open(f"{dir_path}/{id}{'_' + no if len(tweet['media_urls']) > 1 else ''}.{extension}","wb") as handler:
+        with open(f"{dir_path}/{id}{'_' + str(no) if len(tweet['media_urls']) > 1 else ''}.{extension}","wb") as handler:
             handler.write(data)
         no += 1
     if include_text:
         download_text_tweet(id, tweet, dir_path)
 
+
+def cleanup(path: str):
+    try:
+        shutil.rmtree(path)
+        os.remove(path + ".zip")
+        return True
+    except Exception:
+        return False
 
