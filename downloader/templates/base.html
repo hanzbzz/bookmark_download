@@ -12,19 +12,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="flex flex-col flex-wrap h-screen">
+    <div class="flex flex-col flex-wrap h-screen bg-slate-200">
         <header class="flex basis-1/6 items-center justify-center bg-sky-500">
             <p class="text-neutral-50 font-bebas-neue text-6xl tracking-wide">Twitter Bookmark Downloader</p>
         </header>
         <section class="flex grow flex-col bg-sky-200 ml-10 mr-10">
             {% if logged_in %}
                 {% block user_info %}{% endblock %}
+                {% block download %}{% endblock %}
             {% else %}
                 {% block login %}{% endblock %}
             {% endif %}
         </section>
-        <footer class="flex basis-1/12 bg-cyan-400">
-            <p>aa</p>
+        <footer class="flex basis-1/12 bg-slate-200">
+            <p>© 2022</p>
         </footer>
     </div>
 </body>

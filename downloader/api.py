@@ -41,7 +41,7 @@ def download():
     tweets = bookmarks.data
     media = bookmarks.includes.get('media')
     tweets = utils.parse_bookmarks(tweets, media)
-    path = utils.download_tweets(tweets,["text", "video", "photo"], False)
+    path = utils.download_tweets(tweets, ["text", "video", "photo"], False)
     zip_file = shutil.make_archive(path, "zip", path)
     resp = send_file(zip_file)
     utils.cleanup(path)
