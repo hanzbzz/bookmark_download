@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, redirect, url_for
+from flask import Blueprint, request, session, redirect, url_for, abort
 from dotenv import load_dotenv
 import tweepy
 import os
@@ -29,7 +29,7 @@ def url():
 def callback():
     try:
         access_token = oauth2.fetch_token(request.url)
-    except tweepy.TweepyException:
-        print("Error trying to get access token")
+    except Exception:
+        abort(400)
     session['bearer_token'] = access_token['access_token']
     return redirect(url_for('api.user'))

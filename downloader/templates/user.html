@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block download %}
-    <form class="flex items-center justify-center grow" action="aa">
+    <form class="flex items-center justify-center grow" action="{{url_for('api.download')}}">
         <script>
             window.onload =  function() {  
                var checkboxes = document.getElementsByClassName("h-6 w-6 checkbox")
@@ -53,7 +53,7 @@
                 </div>
             </div>
             <div class="p-2">
-                <input class="h-6 w-6 " type="checkbox" id="include">
+                <input class="h-6 w-6 " type="checkbox" id="include" name="include">
                 <label for="include">Include text from tweets that include Videos and Photos</label>
             </div>
             <div class="self-center">
