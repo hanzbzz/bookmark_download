@@ -16,16 +16,16 @@
 {% endblock %}
 
 {% block download %}
-    <form class="flex items-center justify-center grow" action="{{url_for('api.download')}}">
+    <form class="flex items-center justify-center grow" action="{{url_for('api.download')}}" id="form">
         <script>
-            window.onload =  function() {  
+            window.onload =  function() { 
                var checkboxes = document.getElementsByClassName("h-6 w-6 checkbox")
+               var submit = document.getElementById("submit")
                for (var i =0; i < checkboxes.length; i++){
                 checkboxes[i].addEventListener('change', function (){
                     var arr = Array.prototype.slice.call(checkboxes)
                 
                     var x = arr.filter(checkbox => checkbox.checked)
-                    var submit = document.getElementById("submit")
                     if (x.length > 0){
                         submit.disabled = false
                     }
@@ -38,7 +38,8 @@
         </script>
         <div class="flex flex-col text-2xl">
             <p class="p-2">Please select what should the tweets you wish to download include:</p>
-            <div class="flex flex-row justify-evenly">
+            <p class="p-2 self-center text-base text-red-700">Select at least one of the otpions below</p>
+            <div class="flex flex-row justify-evenly" id="checkboxes-div">
                 <div class="p-2">
                     <input class="h-6 w-6 checkbox" id="text" type="checkbox" name="text">
                     <label  for="text">Text only</label>
@@ -56,8 +57,8 @@
                 <input class="h-6 w-6 " type="checkbox" id="include" name="include">
                 <label for="include">Include text from tweets that include Videos and Photos</label>
             </div>
-            <div class="self-center">
-                <button class="bg-sky-900 m-2 px-4 py-2 text-white rounded-xl hover:bg-sky-700 hover:cursor-pointer" type="submit" id="submit" disabled >Download</button>
+            <div class="self-center" id="btn">
+                <button class="bg-sky-900 m-2 px-4 py-2 text-white rounded-xl hover:bg-sky-700 hover:cursor-pointer" type="submit" id="submit" disabled>Download</button>
             </div>
         </div>
     </form>
