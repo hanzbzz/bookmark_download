@@ -1,10 +1,10 @@
 import os
 from dotenv import load_dotenv
 import tweepy
-from flask import session, Blueprint, redirect, url_for, send_file, request, abort
+from flask import session, Blueprint, redirect, url_for, send_file, request, abort, g
 import shutil
 from . import utils
-
+from . import db
 
 load_dotenv()
 
@@ -14,6 +14,7 @@ api_secret = os.environ["API_SECRET"]
 bp = Blueprint('api', __name__, url_prefix="/api")
 
 client = tweepy.Client(consumer_key=api_key, consumer_secret=api_secret)
+
 
 @bp.before_request
 def client_init():
@@ -26,7 +27,9 @@ def user():
         user: tweepy.User = client.get_me(user_fields='profile_image_url', user_auth=False).data
     except tweepy.errors.Forbidden:
         abort(403)
-        
+    # log to database
+    db.insert_to_login(g.conn, user.username, "login")
+    
     session['username'] = user.username
     session['profile_pic_url'] = user.profile_image_url
     return redirect(url_for('index'))
@@ -34,6 +37,9 @@ def user():
 
 @bp.route('/logout')
 def logout():
+    # log to database
+    db.insert_to_login(g.conn, session["username"], "logout")
+
     session.clear()
     return redirect(url_for('index'))
 

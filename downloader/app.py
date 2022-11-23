@@ -3,12 +3,17 @@ import os
 
 from flask import Flask, render_template, session, g
 from . import auth, api
+from . import init_db, db
 
 def create_app():
     app = Flask(__name__,static_url_path="/static")
     app.config.from_mapping(
         SECRET_KEY='dev'
     )
+
+    with app.app_context():
+        init_db.init()
+
     try:
         os.makedirs(app.instance_path)
     except OSError:
@@ -26,6 +31,8 @@ def create_app():
     @app.before_request
     def permanent_session():
         g.username, g.profile_pic_url = session.get('username'), session.get('profile_pic_url')
+        g.conn = db.get_db_connection()
         session.permanent = True
     
+
     return app

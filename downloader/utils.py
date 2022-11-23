@@ -53,8 +53,8 @@ def parse_bookmarks(tweets: List[tweepy.Tweet], media: List[tweepy.Media]):
 
 def make_random_dir(name_length: int):
     dir_name = "".join(random.choice(string.ascii_letters + string.digits)for _ in range(name_length))
-    os.mkdir("downloads/" + dir_name)
-    return "downloads/" + dir_name
+    os.makedirs("/usr/app/downloads/" + dir_name)
+    return "/usr/app/downloads/" + dir_name
 
 def download_tweets(tweets: dict[str, dict], selected_types: List[str], include_text: bool):
     dir_path = make_random_dir(12)

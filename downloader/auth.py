@@ -15,8 +15,8 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 oauth2 = tweepy.OAuth2UserHandler(
     client_id=client_id,
     client_secret=client_secret,
-    redirect_uri="http://localhost:8080/auth/callback",
-    scope=["tweet.read", "users.read", "bookmark.read", "bookmark.write"])
+    redirect_uri="http://127.0.0.1:8080/auth/callback",
+    scope=["tweet.read", "users.read", "bookmark.read"])
 
 
 
