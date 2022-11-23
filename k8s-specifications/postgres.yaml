@@ -15,44 +15,63 @@ spec:
         app: postgresdb
     spec:
       containers:
-        - name: postgres
-          image: postgres:latest
-          ports:
-          - containerPort: 5432
-          env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: pguser
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: pgpassword
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: pgdb
-#          volumeMounts:
-#          - name: postgres-storage
-#            mountPath: /var/lib/postgresql/data
-##      volumes:
-#        - name: postgres-storage
-#          persistentVolumeClaim:
-#            claimName: postgres-pv-claim
-#---
-#apiVersion: v1
-#kind: PersistentVolumeClaim
-#metadata:
-#  name: postgres-pv-claim
-#spec:
-# accessModes:
-#   - ReadWriteOnce
-# resources:
-#    requests:
-#      storage: 5Gi
+      - name: postgres
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: pguser
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: pgpassword
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: pgdb
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+  labels:
+    type: local
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity: 
+    storage: 100M
+  storageClassName: manual
+  hostPath: 
+    path: "/var/lib/postgresql/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: postgresdb
+spec:
+  storageClassName: manual
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100M
+
 --- 
 apiVersion: v1
 kind: Service

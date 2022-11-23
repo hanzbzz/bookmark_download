@@ -1,4 +1,3 @@
-
 import os
 
 from flask import Flask, render_template, session, g
@@ -11,8 +10,7 @@ def create_app():
         SECRET_KEY='dev'
     )
 
-    with app.app_context():
-        init_db.init()
+    init_db.init()
 
     try:
         os.makedirs(app.instance_path)
